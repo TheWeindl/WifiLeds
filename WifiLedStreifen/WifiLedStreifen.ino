@@ -1,48 +1,68 @@
 #include <ESP8266WiFi.h>
-#include <WiFiClient.h>
 
-// Hardcode WiFi parameters as this isn't going to be moving around.
-const char* ssid = "PBS-370351";
-const char* password = "RVLO1QB9K8XWAw8Xk34S9Iv9";
+//const char* ssid = "PBS-370351";
+//const char* password = "RVLO1QB9K8XWAw8Xk34S9Iv9";
+const char* ssid = "NETGEAR24";
+const char* password = "orangetrail517";
+const char* host = "192.168.1.4"; //IP des Java-Servers
+const int serverPort = 5045; //Port des Java-Servers (ServerSocket)
+const int id = 1;
 
-// Start a TCP Server on port 5045
-WiFiServer server(5045);
 
 void setup() {
-  Serial.begin(115200);
-  WiFi.begin(ssid,password);
-  Serial.println("");
-  //Wait for connection
-  while(WiFi.status() != WL_CONNECTED) {
+  Serial.begin(115200); //Kontrollausgabe aktivieren
+  delay(800);
+
+  Serial.println();
+  Serial.print("Versuche Verbindung zum AP mit der SSID=");
+  Serial.print(ssid);
+  Serial.println(" herzustellen");
+  
+  WiFi.begin(ssid, password);
+
+  /*Solange keine Verbindung zu einem AccessPoint (AP) aufgebaut wurde*/
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  Serial.print("Connected to "); Serial.println(ssid);
-  Serial.print("IP Address: "); Serial.println(WiFi.localIP());
-  
-  // Start the TCP server
-  server.begin();
+
+  Serial.println();
+  Serial.print("Verbunden mit IP ");
+  Serial.println(WiFi.localIP());
+  /*Signalstärke des AP*/
+  long rssi = WiFi.RSSI();
+  Serial.print("Signalstaerke(RSSI) des AP:");
+  Serial.print(rssi);
+  Serial.println(" dBm");
 }
+
 
 void loop() {
-  TCPServer();
-}
 
-void TCPServer () {
-    WiFiClient client = server.available();
-    
-  if (client) {
-    if (client.connected()) {
-      Serial.println("Connected to client");    
-    }
-    
-    while (client.available() > 0) {
-      // Read incoming message
-      char inChar = client.read();
-      // Send back something to the clinet
-      server.write(inChar);
-      // Echo input on Serial monitor
-      Serial.write(inChar);
-    }
+  WiFiClient client;
+  
+  if (!client.connect(host, serverPort)) {
+    Serial.print("X");
+    return;
   }
-}
+  
+  Serial.println();
+  Serial.print("Connected to ");
+  Serial.println(host);
+
+  String request = "Request update ID";
+  Serial.print("Sending: ");
+  Serial.print(request); Serial.println(id);
+  client.print(request); client.println(id);
+  delay(200);
+  
+  String line = client.readStringUntil('\n');
+  Serial.println(line);
+  
+  client.flush();
+  client.stop();
+  Serial.println("Connection closed"); 
+
+  delay(500);
+}   
+
