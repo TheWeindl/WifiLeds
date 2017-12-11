@@ -4,9 +4,10 @@
 //const char* password = "RVLO1QB9K8XWAw8Xk34S9Iv9";
 const char* ssid = "NETGEAR24";
 const char* password = "orangetrail517";
-const char* host = "192.168.1.4"; //IP des Java-Servers
-const int serverPort = 5045; //Port des Java-Servers (ServerSocket)
-const int id = 1;
+const char* host = "192.168.1.4";         //IP des Java-Servers
+const int serverPort = 5045;              //Port des Java-Servers (ServerSocket)
+const int id = 1;                         //Device ID for identification
+const int interval = 1;                   //Update Requests per second
 
 
 void setup() {
@@ -63,6 +64,6 @@ void loop() {
   client.stop();
   Serial.println("Connection closed"); 
 
-  delay(500);
+  delay(1000/interval);
 }   
 
