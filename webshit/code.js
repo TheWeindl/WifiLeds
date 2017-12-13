@@ -1,24 +1,21 @@
-$().ready(function(){
-  var exampleSocket = new WebSocket("192.168.1.4");
+$(document).ready(function(){
+  var ws = new WebSocket("ws://192.168.1.4:5045");
 
-  $("button#test").on("click", function() {
-    sendText(1, [255, 64, 48], 1, 1);
-  });
+  ws.onerror = function(event) {
+    console.log(event, "error");
+  }
 
-});
-
-function sendText(id, colors, status = 1, change = 1) {
   // Construct a msg object containing the data the server needs to process the message from the chat client.
   var msg = {
-    id: id,
-    colors: colors,
-    status: status,
-    change: change
+    id: 1,
+    colors: [255,1,150],
+    status: 1,
+    change: 1
   };
 
-  // Send the msg object as a JSON-formatted string.
-  exampleSocket.send(JSON.stringify(msg));
-
-  // Blank the text input element, ready to receive the next line of text from the user.
-  document.getElementById("text").value = "";
-}
+  ws.onopen = function(event) {
+    console.log(event);
+    // Send the msg object as a JSON-formatted string.
+    ws.send(JSON.stringify(msg));
+  }
+});
