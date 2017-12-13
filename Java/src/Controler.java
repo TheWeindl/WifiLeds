@@ -11,11 +11,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 public class Controler implements Runnable {
 
 	public final static String ADDRESS = "192.168.1.4";
 	public final static int PORT = 5045;
 	public final static long TIMEOUT = 10000;
+	public final static int READWAIT = 2000;
 
 	private List<LedStrip> mStrips = new ArrayList<LedStrip>();
 	private ServerSocketChannel serverChannel;
@@ -120,7 +123,7 @@ public class Controler implements Runnable {
 		int read;
 		try {
 			// Needed because the microcontroller can not send data that fast
-			sleep(100);
+			sleep(READWAIT);
 			read = channel.read(readBuffer);
 		} catch (IOException e) {
 			System.out.println("Reading problem, closing connection");
@@ -145,26 +148,36 @@ public class Controler implements Runnable {
 		String input = new String(data);
 		String response = "empty";
 		SocketChannel channel = (SocketChannel) key.channel();
-
-		if (input.contains("Request update ID")) {
-
-			String res[] = input.split("ID");
-			int id = Integer.valueOf(res[res.length - 1].trim());
-
-			if (id <= mStrips.size() && id >= 0) {
-				response = "#" + mStrips.get(id - 1).getRed() + '#' + mStrips.get(id - 1).getGreen() + '#' + mStrips.get(id - 1).getBlue();
-			}		
-
-			dataTracking.put(channel, response.getBytes());
-			key.interestOps(SelectionKey.OP_WRITE);
+		JSONObject jsonObject = new JSONObject(input);
+		
+		//Check for the selector of what to do with the message
+		if(jsonObject.getInt("change") == 1)
+		{
+			//The message was sent by the website and is a change request
+			int id = jsonObject.getInt("id");
 			
-		//TODO: Add Registering 
-			
-		//TODO: Add Color setting for user client
-			
-		} else {
-			System.out.println("Unknown Request");
+			if(id < mStrips.size() && id >= 0)
+			{
+				mStrips.get(id).setStripColor(jsonObject.getJSONArray("color").getInt(0), jsonObject.getJSONArray("color").getInt(1), jsonObject.getJSONArray("color").getInt(2));
+				mStrips.get(id).setStatus(jsonObject.getBoolean("status"));
+			}
+			key.interestOps(SelectionKey.OP_ACCEPT);
 		}
+		else
+		{
+			//The message was sent by a led strip and is an update request
+			int id = jsonObject.getInt("id");
+			int color[] = {mStrips.get(id).getRed(), mStrips.get(id).getGreen(), mStrips.get(id).getBlue()};
+					
+			JSONObject jsonResponse = new JSONObject();
+			jsonResponse.put("id", id);
+			jsonResponse.put("color", color);
+			jsonResponse.put("status", mStrips.get(id).getStatus());
+			jsonResponse.put("change", 1);
+			
+			dataTracking.put(channel, jsonResponse.toString().getBytes());
+			key.interestOps(SelectionKey.OP_WRITE);
+		}		
 	}
 
 	private void closeConnection() {
