@@ -285,10 +285,11 @@ h1 {
   border-left:2px solid rgba(251,49,10,0.8);
 }
 
-/* globals */
-body {
-  background:url('https://dl.dropboxusercontent.com/u/330966/static/broken_noise.png');
+#switches {
+  display: flex;
 }
+
+/* globals */
 html, body {
   height:100%;
 }
