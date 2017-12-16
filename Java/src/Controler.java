@@ -32,7 +32,9 @@ public class Controler implements Runnable {
 
 	public void InitLedStrips(int num) {
 		for (int i = 0; i < num; i++) {
-			mStrips.add(new LedStrip());
+			LedStrip strip = new LedStrip();
+			strip.setStripColor(120, 110, 100);
+			mStrips.add(strip);
 		}
 	}
 

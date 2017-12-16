@@ -8,8 +8,8 @@ public class LedStrip {
 
 	public LedStrip() {
 		mRed = 255;
-		mGreen = 64;
-		mBlue = 128;
+		mGreen = 255;
+		mBlue = 255;
 
 	}
 

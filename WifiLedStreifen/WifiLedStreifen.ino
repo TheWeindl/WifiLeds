@@ -1,10 +1,10 @@
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 
-const char* ssid = "PBS-370351";
-const char* password = "RVLO1QB9K8XWAw8Xk34S9Iv9";
-//const char* ssid = "NETGEAR24";
-//const char* password = "orangetrail517";
+//const char* ssid = "PBS-370351";
+//const char* password = "RVLO1QB9K8XWAw8Xk34S9Iv9";
+const char* ssid = "NETGEAR24";
+const char* password = "orangetrail517";
 const char* host = "192.168.1.4";         //IP des Java-Servers
 const int serverPort = 5045;              //Port des Java-Servers (ServerSocket)
 const int interval = 1;                   //Update Requests per second
