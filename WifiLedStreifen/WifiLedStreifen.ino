@@ -75,10 +75,15 @@ void loop() {
   //Send JSON to server
   requestJson.printTo(client);
   
-  delay(200);
+  delay(400);
   
   //Get answer form server
   String json = client.readStringUntil('\n');
+  String test = client.readStringUntil('\n');
+
+  Serial.print("Data: ");
+  Serial.println(json);
+  Serial.println(test);
 
   DynamicJsonBuffer inputBuffer;
   JsonObject& msg = inputBuffer.parseObject(json);
@@ -86,6 +91,8 @@ void loop() {
   if(!msg.success())
   {
     Serial.println("parseObject() failed");
+    client.flush();
+    client.stop();
     return;
   }
 
