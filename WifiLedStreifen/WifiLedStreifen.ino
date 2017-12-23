@@ -10,7 +10,7 @@ const char* host = "10.0.0.13";
 const int serverPort = 5045;              //Port des Java-Servers (ServerSocket)
 const int interval = 1;                   //Update Requests per second
 
-bool mStatus = false;
+int mStatus = 0;
 const int mId = 1;                         //Device ID for identification on the server
 int mRed = 0;
 int mGreen = 0;
@@ -50,7 +50,6 @@ void setup() {
 
 void loop() {
 
-  DynamicJsonBuffer jsonBuffer;
   WiFiClient client;
 
   //Change LED Pins according to the intern color values
@@ -61,6 +60,8 @@ void loop() {
     return;
   }
 
+  StaticJsonBuffer<200> jsonBuffer;
+  StaticJsonBuffer<200> inputBuffer;
   JsonObject& requestJson = jsonBuffer.createObject();
   JsonArray& colorArr = requestJson.createNestedArray("color");
   
@@ -73,26 +74,32 @@ void loop() {
   colorArr.add(mBlue);  
 
   //Send JSON to server
-  requestJson.printTo(client);
-  
-  delay(400);
-  
-  //Get answer form server
-  String json = client.readStringUntil('\n');
-  String test = client.readStringUntil('\n');
+  requestJson.printTo(client); 
+  delay(200);
 
+
+  String json = "no input";
+  if(client.available())
+  {
+    //Get answer form server
+    json = client.readStringUntil('\n');
+    Serial.print("Data: ");
+    Serial.println(json);
+  }
+  else
+  {
+    Serial.println("Server not available");
+  }
   Serial.print("Data: ");
   Serial.println(json);
-  Serial.println(test);
-
-  DynamicJsonBuffer inputBuffer;
+ 
   JsonObject& msg = inputBuffer.parseObject(json);
+  client.flush();
+  client.stop();
 
   if(!msg.success())
   {
     Serial.println("parseObject() failed");
-    client.flush();
-    client.stop();
     return;
   }
 
@@ -101,9 +108,6 @@ void loop() {
   mGreen    = msg["color"][1];
   mBlue     = msg["color"][2];  
   
-  client.flush();
-  client.stop();
-
   Serial.print(mRed); Serial.print(" ");
   Serial.print(mGreen); Serial.print(" ");
   Serial.println(mBlue);

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="simple-menu-v.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/simple-menu-v.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
