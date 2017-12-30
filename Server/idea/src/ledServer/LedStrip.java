@@ -10,8 +10,8 @@ public class LedStrip {
 
 	public LedStrip() {
 		mRed = 255;
-		mGreen = 255;
-		mBlue = 255;
+		mGreen = 0;
+		mBlue = 0;
 		mStatus = 0;
 
 	}
