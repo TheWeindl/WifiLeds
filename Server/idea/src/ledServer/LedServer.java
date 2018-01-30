@@ -97,7 +97,7 @@ public class LedServer extends InsecureServer{
 						System.out.println("ERROR: command not recognized");
 					}
 				}
-				Sleep(100);
+				Sleep(10);
 			}
 			while (!content.equals("END"));
 			writer.flush();

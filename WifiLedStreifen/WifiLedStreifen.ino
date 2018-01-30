@@ -2,14 +2,19 @@
 #include <ArduinoJson.h>
 
 // KRM
-const char* ssid = "PBS-370351";
-const char* password = "RVLO1QB9K8XWAw8Xk34S9Iv9";
-const char* host = "10.0.0.13";
+//const char* ssid = "PBS-370351";
+//const char* password = "RVLO1QB9K8XWAw8Xk34S9Iv9";
+//const char* host = "10.0.0.13";
+
+//const char* ssid = "TP-LINK_AP_A596";
+//const char* password = "72830567";
+//const char* host = "10.0.0.13";
+
 
 // HGB 
-//const char* ssid = "NETGEAR24";
-//const char* password = "orangetrail517";
-//const char* host = "192.168.1.4";         //IP des Java-Servers
+const char* ssid = "NETGEAR24";
+const char* password = "orangetrail517";
+const char* host = "192.168.1.7";         //IP des Java-Servers
 
 const int serverPort = 5045;                //Port des Java-Servers (ServerSocket)
 const int interval = 1;                     //Update Requests per second
@@ -72,8 +77,7 @@ void loop()
     ProcessResponse(res);
     ShutdownConnection(client);    
   }    
-  
-  delay(2000);
+  delay(200);
 }
 
 void OutputColor()
